@@ -10,7 +10,7 @@ RUN pip install --no-cache-dir --prefix=/install -r train.txt
 FROM python:3.11-slim
 
 WORKDIR /app
-
+LABEL org.opencontainers.image.title="CIFAR-10 Training Pipeline"
 COPY --from=builder /install /usr/local
 
 COPY src ./src
