@@ -1,0 +1,25 @@
+FROM python:3.11-slim AS builder
+
+WORKDIR /app
+
+COPY requirements/serve.txt .
+
+RUN pip install --no-cache-dir --prefix=/install -r serve.txt
+
+
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY --from=builder /install /usr/local
+
+COPY src ./src
+
+RUN mkdir -p /app/checkpoints
+
+ENV PYTHONUNBUFFERED=1
+ENV MODEL_PATH=/app/checkpoints/classifier_v1.pt
+
+EXPOSE 8000
+
+CMD ["uvicorn", "src.serve:app", "--host", "0.0.0.0", "--port", "8000"]
